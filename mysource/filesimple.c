@@ -7,6 +7,8 @@
  * A small example of jsmn parsing when JSON structure is known and number of
  * tokens is predictable.
  */
+
+
 char *readJSONFile() {
 	char oneline[250];
 
@@ -46,9 +48,8 @@ int main() {
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
 	char *JSON_STRING = readJSONFile();
-	printf("JSON_STRING : %s",JSON_STRING);
 
-	/*jsmn_init(&p);
+	jsmn_init(&p);
 
 	r = jsmn_parse(&p, JSON_STRING, strlen(JSON_STRING), t, sizeof(t)/sizeof(t[0]));
 	if (r < 0) {
@@ -62,21 +63,21 @@ int main() {
 	}
 
 	for (i = 1; i < r; i++) {
-		if (jsoneq(JSON_STRING, &t[i], "user") == 0) {
-			printf("- User: %.*s\n", t[i+1].end-t[i+1].start,
+		if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
+			printf("- name : %.*s\n", t[i+1].end-t[i+1].start,
 					JSON_STRING + t[i+1].start);
 			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "admin") == 0) {
-			printf("- Admin: %.*s\n", t[i+1].end-t[i+1].start,
+		} else if (jsoneq(JSON_STRING, &t[i], "keywords") == 0) {
+			printf("- keywords: %.*s\n", t[i+1].end-t[i+1].start,
 					JSON_STRING + t[i+1].start);
 			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "uid") == 0) {
+		} else if (jsoneq(JSON_STRING, &t[i], "description") == 0) {
 			printf("- UID: %.*s\n", t[i+1].end-t[i+1].start,
 					JSON_STRING + t[i+1].start);
 			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "groups") == 0) {
+		} else if (jsoneq(JSON_STRING, &t[i], "examples") == 0) {
 			int j;
-			printf("- Groups:\n");
+			printf("- examples:\n");
 			if (t[i+1].type != JSMN_ARRAY) {
 				continue;
 			}
@@ -85,11 +86,8 @@ int main() {
 				printf("  * %.*s\n", g->end - g->start, JSON_STRING + g->start);
 			}
 			i += t[i+1].size + 1;
-		} else {
-			printf("Unexpected key: %.*s\n", t[i].end-t[i].start,
-					JSON_STRING + t[i].start);
 		}
 	}
 	return EXIT_SUCCESS;
-*/
+
 }
