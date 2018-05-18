@@ -42,6 +42,17 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 	return -1;
 }
 
+void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount){
+	int i, count = 1;
+	for(i=1; i< tokcount ; i++){
+		if(t[i].type == JSMN_STRING && t[i].size > 0) {
+			printf(" [NAME %d] %.*s\n",count, t[i].end-t[i].start,
+			jsonstr + t[i].start);
+			count++;
+		}
+	}
+}
+
 int main() {
 	int i;
 	int r;
@@ -62,8 +73,8 @@ int main() {
 		return 1;
 	}
 
-	for (i = 1; i < r; i++) {
-		if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
+		jsonNameList(JSON_STRING, t,  r);
+		/*if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
 			printf("- name : %.*s\n", t[i+1].end-t[i+1].start,
 					JSON_STRING + t[i+1].start);
 			i++;
@@ -86,8 +97,7 @@ int main() {
 				printf("  * %.*s\n", g->end - g->start, JSON_STRING + g->start);
 			}
 			i += t[i+1].size + 1;
-		}
-	}
+		}*/
 	return EXIT_SUCCESS;
 
 }
