@@ -65,15 +65,13 @@ void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 		printf("Select Name's no (exit:0) >> ");
 		scanf("%d", &num);
 		if(num==0) break;
-		int  i=1;
+		int  i;
 		printf("[NAME %d] %.*s\n",num ,t[nameTokIndex[num-1]].end-t[nameTokIndex[num-1]].start,
 		jsonstr + t[nameTokIndex[num-1]].start);
 		int nameTokNextIndex = nameTokIndex[num-1]+1;
 		if(t[nameTokNextIndex].type==JSMN_STRING){
-			for(i=1; t[nameTokIndex[num-1]+i].size==0 && t[nameTokIndex[num-1]+i].type == JSMN_STRING; i++){
-				printf("%.*s\n",t[nameTokIndex[num-1]+i].end-t[nameTokIndex[num-1]+i].start,jsonstr + t[nameTokIndex[num-1]+i].start);
+			printf("%.*s\n",t[nameTokNextIndex].end-t[nameTokNextIndex].start,jsonstr + t[nameTokNextIndex].start);
 			}
-		}
 
 		else if(t[nameTokNextIndex].type ==JSMN_OBJECT){
 			int objectEnd = t[nameTokIndex[num-1]+1].end;
