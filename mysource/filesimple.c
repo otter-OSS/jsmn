@@ -74,7 +74,7 @@ void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 			}
 
 		else if(t[nameTokNextIndex].type ==JSMN_OBJECT){
-			int objectEnd = t[nameTokIndex[num-1]+1].end;
+			int objectEnd = t[nameTokNextIndex].end;
 			i= nameTokNextIndex + 1;
 			while(t[i].size <= 1 && t[i].start < objectEnd){
 				if(t[i].size != 0) printf("%.*s: ",t[i].end-t[i].start, jsonstr + t[i].start);
