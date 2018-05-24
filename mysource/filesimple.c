@@ -55,9 +55,46 @@ void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex) 
 void printNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 	int i;
 	printf("***** Name List *****\n");
-	for(i=0; nameTokIndex[i]!=0 ; i++) printf(" [NAME %d] %.*s\n",i+1 ,t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,
+	for(i=0; nameTokIndex[i]!=0 ; i++) printf(" [NAME %d] %.*s\n" ,i+1 ,t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,
 	jsonstr + t[nameTokIndex[i]].start);
 }
+
+void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
+	int num;
+	while(1){
+		printf("Select Name's no (exit:0) >> ");
+		scanf("%d", &num);
+		if(num==0) break;
+		int  i=1;
+		printf("[NAME %d] %.*s\n",num ,t[nameTokIndex[num-1]].end-t[nameTokIndex[num-1]].start,
+		jsonstr + t[nameTokIndex[num-1]].start);
+		int nameTokNextIndex = nameTokIndex[num-1]+1;
+		if(t[nameTokNextIndex].type==JSMN_STRING){
+			for(i=1; t[nameTokIndex[num-1]+i].size==0 && t[nameTokIndex[num-1]+i].type == JSMN_STRING; i++){
+				printf("%.*s\n",t[nameTokIndex[num-1]+i].end-t[nameTokIndex[num-1]+i].start,jsonstr + t[nameTokIndex[num-1]+i].start);
+			}
+		}
+
+		else if(t[nameTokNextIndex].type ==JSMN_OBJECT){
+			int objectEnd = t[nameTokIndex[num-1]+1].end;
+			i= nameTokNextIndex + 1;
+			while(t[i].size <= 1 && t[i].start < objectEnd){
+				if(t[i].size != 0) printf("%.*s: ",t[i].end-t[i].start, jsonstr + t[i].start);
+					else printf("%.*s,\n",t[i].end-t[i].start, jsonstr + t[i].start);
+					i++;
+			}
+		}
+		else if(t[nameTokNextIndex].type ==JSMN_ARRAY){
+			int arrayEnd = t[nameTokNextIndex].end;
+			i= nameTokIndex[num-1]+1;
+			while(t[i].size == 0 && t[i].start < arrayEnd){
+				printf("%.*s: ",t[i].end-t[i].start, jsonstr + t[i].start);
+				i++;
+			}
+		}
+			printf("\n");
+		}
+	}
 
 int main() {
 	int i;
@@ -79,33 +116,10 @@ int main() {
 		return 1;
 	}
 	int nameTokIndex[100]={0};
-	//printf("In main, the size of nameTokIndex : %u\n", (int)sizeof(nameTokIndex));
 	jsonNameList(JSON_STRING, t, r, nameTokIndex);
 	printNameList(JSON_STRING, t, nameTokIndex);
-		/*if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
-			printf("- name : %.*s\n", t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
-			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "keywords") == 0) {
-			printf("- keywords: %.*s\n", t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
-			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "description") == 0) {
-			printf("- UID: %.*s\n", t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
-			i++;
-		} else if (jsoneq(JSON_STRING, &t[i], "examples") == 0) {
-			int j;
-			printf("- examples:\n");
-			if (t[i+1].type != JSMN_ARRAY) {
-				continue;
-			}
-			for (j = 0; j < t[i+1].size; j++) {
-				jsmntok_t *g = &t[i+j+2];
-				printf("  * %.*s\n", g->end - g->start, JSON_STRING + g->start);
-			}
-			i += t[i+1].size + 1;
-		}*/
+	selectNameList(JSON_STRING, t, nameTokIndex);
+
 	return EXIT_SUCCESS;
 
 }
