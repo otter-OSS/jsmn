@@ -45,10 +45,7 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex) {
 	int i, count = 0;
 	for(i=1; i < tokcount ; i++){
-		nameTokIndex =(int *)realloc(nameTokIndex, (count+1) * sizeof(int));
 		if(t[i].type == JSMN_STRING && t[i].size > 0) {
-			printf("This index will be stored in %d\n", count);
-			printf("Size of Array nameTokIndex is %d\n", (int)sizeof(nameTokIndex));
 			nameTokIndex[count] = i;
 			count++;
 		}
@@ -56,11 +53,10 @@ void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex) 
 }
 
 void printNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
-	printf("Before print name list, Check size of array > %d\n", (int)sizeof(nameTokIndex));
 	int i;
-	for(i=0; i <= (int)sizeof(nameTokIndex); i++) printf(" [NAME %d] %.*s\n",i+1 ,t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,
+	printf("***** Name List *****\n");
+	for(i=0; nameTokIndex[i]!=0 ; i++) printf(" [NAME %d] %.*s\n",i+1 ,t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,
 	jsonstr + t[nameTokIndex[i]].start);
-	printf("End of print function\n");
 }
 
 int main() {
@@ -82,11 +78,10 @@ int main() {
 		printf("Object expected\n");
 		return 1;
 	}
-	int *nameTokIndex=NULL;
+	int nameTokIndex[100]={0};
 	//printf("In main, the size of nameTokIndex : %u\n", (int)sizeof(nameTokIndex));
 	jsonNameList(JSON_STRING, t, r, nameTokIndex);
 	printNameList(JSON_STRING, t, nameTokIndex);
-	printf("End\n");
 		/*if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
 			printf("- name : %.*s\n", t[i+1].end-t[i+1].start,
 					JSON_STRING + t[i+1].start);
