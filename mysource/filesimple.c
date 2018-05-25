@@ -44,12 +44,13 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 
 void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex) {
 	int i, count = 0;
-	for(i=1; i < tokcount ; i++){
+	for(i=1; i < tokcount ; i++) {
 		if(t[i].type == JSMN_STRING && t[i].size > 0) {
 			nameTokIndex[count] = i;
 			count++;
 		}
 	}
+	printf("count : %d\n", count);
 }
 
 void printNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
@@ -59,7 +60,7 @@ void printNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 	jsonstr + t[nameTokIndex[i]].start);
 }
 
-void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
+/*void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 	int num;
 	while(1){
 		printf("Select Name's no (exit:0) >> ");
@@ -92,7 +93,7 @@ void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 		}
 			printf("\n");
 		}
-	}
+	}*/
 
 int main() {
 	int i;
@@ -100,6 +101,7 @@ int main() {
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
 	char *JSON_STRING = readJSONFile();
+	printf("파일 읽었음\n");
 
 	jsmn_init(&p);
 
@@ -109,14 +111,12 @@ int main() {
 		return 1;
 	}
 
-	if (r < 1 || t[0].type != JSMN_OBJECT) {
-		printf("Object expected\n");
-		return 1;
-	}
+
 	int nameTokIndex[100]={0};
+	printf("name 뽑아내기 전\n");
 	jsonNameList(JSON_STRING, t, r, nameTokIndex);
 	printNameList(JSON_STRING, t, nameTokIndex);
-	selectNameList(JSON_STRING, t, nameTokIndex);
+	//selectNameList(JSON_STRING, t, nameTokIndex);
 
 	return EXIT_SUCCESS;
 
