@@ -61,13 +61,15 @@ void printNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 void showFirstValueofLists(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 	int i = 0, count= 1;
 	printf("***** Object List *****\n");
-	printf("Fisr [NAME %d] %.*s\n" , i+1 ,t[nameTokIndex[i]+1].end-t[nameTokIndex[i]+1].start,
-	jsonstr + t[nameTokIndex[i]+1].start);
+	printf("[NAME %d] %.*s\n" , i+1 ,t[nameTokIndex[i]+1].end-t[nameTokIndex[i]+1].start,
+	jsonstr + t[nameTokIndex[i]+1].start); //가장 첫번째 value를 출력.
 	for(i= 1; nameTokIndex[i]!=0 ; i++ ) {
 		if(jsoneq(jsonstr, &t[nameTokIndex[0]], &t[nameTokIndex[i]])== 0) {
+			//loop속에서 현재 key가 첫번째 value의 key와 동일한가 jsoneq함수를 이용하여 비교
 			count++;
 			printf(" [NAME %d] %.*s\n" ,count ,t[nameTokIndex[i]+1].end-t[nameTokIndex[i]+1].start,
 		jsonstr + t[nameTokIndex[i]+1].start);
+		//true이면 count를 늘리고 출력. 
 		}
 	}
 }
