@@ -41,15 +41,59 @@ int jsoneq(const char *json, jsmntok_t *tok1, jsmntok_t *tok2) {
 }
 
 void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex) {
-	int i, count= 0;
-	int nextToKey= 0;
-	int keyTokenSize= 0;
+	int i, j, k, count= 0;
+	int currentSuperToken =0;
+	int *superTokSize= (int *)malloc(sizeof(int) * tokcount);
+	int *countSize= (int *)malloc(sizeof(int) * tokcount);
+	int lastSuperTokIndex= 0;
+	for(i=0; i< tokcount; i++) countSize[i]= 0;
+	printf("%d %d %d\n\n", superTokSize[0], superTokSize[3], superTokSize[tokcount]);
+
+	superTokSize[lastSuperTokIndex]= t[0].size;
+	countSize[lastSuperTokIndex]= 0;
+
 	for(i=1; i < tokcount ; i++) {
-		if(t[i].type == JSMN_STRING && t[i].parent == 0) {
-			nameTokIndex[count] = i;
-			count++;
-			keyTokenSize = t[i].size;
+		printf(">>> %.*s \n",t[i].end-t[i].start,	jsonstr + t[i].start);
+		printf("type: %d, size: %d, parent: %d\n", t[i].type, t[i].size, t[i].parent);
+		printf("[%d] lastSuperTokIndex: %d, countSize: %d, superTokSize: %d\n",i, lastSuperTokIndex, countSize[lastSuperTokIndex], superTokSize[lastSuperTokIndex]);
+		for(k=lastSuperTokIndex; countSize[k] == superTokSize[k]; k--){
+				//현재 super 토큰의 사이즈만큼 토큰을 check 했
+			countSize[lastSuperTokIndex]= 0;
+		 	superTokSize[lastSuperTokIndex]= -1;
+			lastSuperTokIndex--;
+			printf("!!다 채워졌다!!\n");
 		}
+
+		countSize[lastSuperTokIndex]++;
+
+		if(t[i].size>0) {
+			if(t[i].type == JSMN_STRING){
+				if(lastSuperTokIndex == 0){
+				nameTokIndex[count]=i;
+				count++;}
+				//countSize[lastSuperTokIndex]++;
+			}
+			printf("[%d] lastSuperTokIndex: %d, countSize: %d, superTokSize: %d\n",i, lastSuperTokIndex, countSize[lastSuperTokIndex], superTokSize[lastSuperTokIndex]);
+
+			lastSuperTokIndex++;
+			printf("%d\n",lastSuperTokIndex );
+			superTokSize[lastSuperTokIndex]= t[i].size;
+			countSize[lastSuperTokIndex]= 0;
+				/*if(t[i].type == JSMN_ARRAY || t[i].type == JSMN_OBJECT){
+				//if()
+					//if(superTokSize[lastSuperTokIndex] != 0) countSize[lastSuperTokIndex]++;
+					//새로운 super 토큰 발견
+					//for(j= 0; j<tokcount; j++) if(superTokSize[j]==0) break;
+					//countSize[lastSuperTokIndex]++;
+				}*/
+			}
+
+		//for(j= 0; j< superTokSize[j]!=0; j++) lastSuperTokIndex= j;
+
+
+
+		printf("[%d] lastSuperTokIndex: %d, countSize: %d, superTokSize: %d\n\n",i, lastSuperTokIndex, countSize[lastSuperTokIndex], superTokSize[lastSuperTokIndex]);
+
 	}
 //	printf("count : %d\n", count);
 }
@@ -132,7 +176,7 @@ void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 	}
 
 int main() {
-	int i;
+	int i, j;
 	int r;
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
@@ -146,13 +190,16 @@ int main() {
 	}
 
 	int nameTokIndex[100]={0};
+	/*for(j = 0; j< r; j++){
+		printf("[%d] type: %d, size: %d, parent: %d\n",j, t[j].type, t[j].size, t[j].parent);
+		printf(" %.*s \n",t[j].end-t[j].start,	JSON_STRING + t[j].start);
+	}*/
 	jsonNameList(JSON_STRING, t, r, nameTokIndex);
 	printNameList(JSON_STRING, t, nameTokIndex);
-	int *firstIndexList = NULL;
-	firstIndexList = showFirstValueofLists(JSON_STRING, t, nameTokIndex, firstIndexList);
+	//int *firstIndexList = NULL;
+	//firstIndexList = showFirstValueofLists(JSON_STRING, t, nameTokIndex, firstIndexList);
 	//selectNameList(JSON_STRING, t, nameTokIndex);
-	printObject(JSON_STRING, t, nameTokIndex, firstIndexList);
+	//printObject(JSON_STRING, t, nameTokIndex, firstIndexList);
 
-	return EXIT_SUCCESS;
-
+	//return EXIT_SUCCESS;
 }
