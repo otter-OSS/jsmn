@@ -55,17 +55,27 @@ void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex) 
 	superTokSize[lastSuperTokIndex]= t[k].size;
 	countSize[lastSuperTokIndex]= 0;
 	if(t[k+1].type == JSMN_STRING){
+		if(t[k+2].type == JSMN_ARRAY){
+			superTokSize[lastSuperTokIndex]= t[k].size;
+			countSize[lastSuperTokIndex]= 0;
+			lastSuperTokIndex++;
+			start = k+3;
+			break;
+		}
 			start = k+1;
 			break;
 		}
 	lastSuperTokIndex++;
 	}
+
 	printf("start: %d lastSuperTokIndex: %d \n", start, lastSuperTokIndex);
+	printf("type: %d, size: %d, parent: %d\n", t[start].type, t[start].size, t[start].parent);
+
 	for(i= start; i < tokcount ; i++) {
 		//printf(">>> %.*s \n",t[i].end-t[i].start,	jsonstr + t[i].start);
 		//printf("type: %d, size: %d, parent: %d\n", t[i].type, t[i].size, t[i].parent);
 		//printf("[%d] lastSuperTokIndex: %d, countSize: %d, superTokSize: %d\n",i, lastSuperTokIndex, countSize[lastSuperTokIndex], superTokSize[lastSuperTokIndex]);
-		for(k=lastSuperTokIndex; countSize[k] == superTokSize[k]; k--){
+		for(k= lastSuperTokIndex; countSize[k] == superTokSize[k]; k--){
 				//현재 super 토큰의 사이즈만큼 토큰을 check 했
 			countSize[lastSuperTokIndex]= 0;
 		 	superTokSize[lastSuperTokIndex]= -1;
@@ -78,7 +88,8 @@ void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex) 
 			if(t[i].type == JSMN_STRING){
 				if(lastSuperTokIndex==start-1){
 				nameTokIndex[count]=i;
-				count++;}
+				count++;
+				}
 				//countSize[lastSuperTokIndex]++;
 			}
 
