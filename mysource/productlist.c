@@ -123,18 +123,32 @@ int getTokenIndex (char *jsonstr, jsmntok_t *t, NameTokenInfo *nameTokenInfo){
 
 void printObject(char *jsonstr, jsmntok_t *t, NameTokenInfo *nameTokenInfo){
 	int i, objectNo;
-
-	for(i =0; i<40; i++) printf("*");
+	char price[20]="";
+	char count[20]="";
+	char totalprice[20]="";
+	int price2=0, count2=0, totalprice2=0;
+	for(i =0; i<50; i++) printf("*");
 	printf("\n");
-	printf("번 호    제품명  제조사   가격    개수    \n");
-	for(i =0; i<40; i++) printf("*");
+	printf("번 호    제품명  제조사   가격    개수   총가격  \n");
+	for(i =0; i<50; i++) printf("*");
 	printf("\n");
 	for(i = 0;i < 4; i++){
 	printf("%3d      ", nameTokenInfo[4*i].objectindex);
 	printf("%.*s   ",t[nameTokenInfo[4*i+1].tokindex+1].end-t[nameTokenInfo[4*i+1].tokindex+1].start, jsonstr + t[nameTokenInfo[4*i+1].tokindex+1].start);
 	printf("%.*s    ",t[nameTokenInfo[4*i].tokindex+1].end-t[nameTokenInfo[4*i].tokindex+1].start, jsonstr + t[nameTokenInfo[4*i].tokindex+1].start);
+
 	printf("%.*s      ",t[nameTokenInfo[4*i+2].tokindex+1].end-t[nameTokenInfo[4*i+2].tokindex+1].start, jsonstr + t[nameTokenInfo[4*i+2].tokindex+1].start);
-	printf("%.*s   \n",t[nameTokenInfo[4*i+3].tokindex+1].end-t[nameTokenInfo[4*i+3].tokindex+1].start, jsonstr + t[nameTokenInfo[4*i+3].tokindex+1].start);
+	strncpy(price,jsonstr + t[nameTokenInfo[4*i+2].tokindex+1].start, t[nameTokenInfo[4*i+2].tokindex+1].end-t[nameTokenInfo[4*i+2].tokindex+1].start);
+	price2 = atoi(price);
+
+	printf("%.*s    ",t[nameTokenInfo[4*i+3].tokindex+1].end-t[nameTokenInfo[4*i+3].tokindex+1].start, jsonstr + t[nameTokenInfo[4*i+3].tokindex+1].start);
+	strncpy(count,jsonstr + t[nameTokenInfo[4*i+3].tokindex+1].start, t[nameTokenInfo[4*i+3].tokindex+1].end-t[nameTokenInfo[4*i+3].tokindex+1].start);
+	count2 = atoi(count);
+
+	totalprice2 = price2 * count2;
+	//sprintf(totalprice, "%d",totalprice2);
+	printf("%d   \n",totalprice2);
+
 	}
 
 
@@ -158,7 +172,7 @@ int main() {
 
 	int nameTokIndex[100]={0};
 	NameTokenInfo nameTokenInfo[100];
-	
+
 	jsonNameList(JSON_STRING, t, r, nameTokenInfo);
 	int tokenindex = getTokenIndex(JSON_STRING, t, nameTokenInfo);
 	//printNameList(JSON_STRING, t, nameTokIndex);
