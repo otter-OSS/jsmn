@@ -66,9 +66,6 @@ int jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, NameTokenInfo *nameT
 		lastSuperTokIndex++;
 	}
 
-	printf("start: %d lastSuperTokIndex: %d \n", start, lastSuperTokIndex);
-	printf("type: %d, size: %d, parent: %d\n", t[start].type, t[start].size, t[start].parent);
-
 	for(i= start; i < tokcount ; i++) {
 		for(k= lastSuperTokIndex; countSize[k] == superTokSize[k]; k--){
 				//현재 super 토큰의 사이즈만큼 토큰을 check 했
@@ -86,9 +83,7 @@ int jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, NameTokenInfo *nameT
 
 				if(jsoneq(jsonstr, &t[nameTokenInfo[0].tokindex], &t[nameTokenInfo[count].tokindex])== 0)
 					if(count!=0) objectcount++;
-
 				nameTokenInfo[count].objectindex = objectcount;
-				printf(">>> %.*s \n",t[i].end-t[i].start,	jsonstr + t[i].start);
 				count++;
 				}
 			}
@@ -105,8 +100,7 @@ int jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, NameTokenInfo *nameT
 int getTokenIndex (char *jsonstr, jsmntok_t *t, NameTokenInfo *nameTokenInfo){
 	int inputObjectNo,i;
 	char inputName[100];
- printf("nameTokenInfo[0].objectindex : %d\n",nameTokenInfo[0].objectindex);
-	printf("name 입력: ");
+ 	printf("name 입력: ");
 	fgets(inputName,sizeof(inputName),stdin);
 	printf("Object 번호 입력 : ");
 	scanf("%d",&inputObjectNo);
@@ -175,11 +169,7 @@ int main() {
 
 	jsonNameList(JSON_STRING, t, r, nameTokenInfo);
 	int tokenindex = getTokenIndex(JSON_STRING, t, nameTokenInfo);
-	//printNameList(JSON_STRING, t, nameTokIndex);
-	//int *firstIndexList = NULL;
-	//firstIndexList = showFirstValueofLists(JSON_STRING, t, nameTokIndex, firstIndexList);
-	//selectNameList(JSON_STRING, t, nameTokIndex);
 	printObject(JSON_STRING, t, nameTokenInfo);
 
-	//return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
 }

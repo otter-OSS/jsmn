@@ -1,0 +1,24 @@
+{
+  "Snack": [
+    { "company": "해태",
+      "name": "후렌치파이",
+      "price": 2990,
+      "count": 2
+    },
+    { "company": "롯데",
+      "name": "몽쉘",
+      "price": 4490,
+      "count": 4
+    },
+    { "company": "농심",
+      "name": "프레첼",
+      "price": 1390,
+      "count": 3
+    },
+    { "company": "크라운",
+      "name": "키커바",
+      "price": 820,
+      "count": 5
+    }
+  ]
+}

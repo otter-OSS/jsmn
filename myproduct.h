@@ -37,10 +37,10 @@ enum jsmnerr {
 };
 
 typedef enum{
-	HAETAE = 0;
-	LOTTE = 1;
-	NONGSHIM = 2;
-	CROWN = 3;
+	HAETAE = 0,
+	LOTTE = 1,
+	NONGSHIM = 2,
+	CROWN = 3,
 } company_t;
 
 typedef struct {

@@ -10,16 +10,12 @@
 
 char *readJSONFile() {
 	char oneline[250];
-  char fileName[100];
-	printf("원하는 파일명 입력: ");
-	scanf("%s", fileName);
-	char pathAndName[200]= "./mysource/";
-	strcat(pathAndName, fileName);
+
 	char *js = (char *)malloc(sizeof(oneline));
 	int count=0;
 	FILE *fp;
-	printf("%s\n", pathAndName);
-	fp = fopen(pathAndName, "r");
+
+	fp = fopen("./mysource/data2.json", "r");
 	if(fp == NULL){
 		printf("파일이 없음");
 		return NULL;
@@ -45,62 +41,17 @@ int jsoneq(const char *json, jsmntok_t *tok1, jsmntok_t *tok2) {
 }
 
 void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex) {
-	int i, j, k, start, count= 0;
-	int *superTokSize= (int *)malloc(sizeof(int) * tokcount);
-	int *countSize= (int *)malloc(sizeof(int) * tokcount);
-	int lastSuperTokIndex= 0;
-	for(i=0; i< tokcount; i++) countSize[i]= 0;
-
-	for(k=0; k< tokcount; k++){
-	superTokSize[lastSuperTokIndex]= t[k].size;
-	countSize[lastSuperTokIndex]= 0;
-	if(t[k+1].type == JSMN_STRING){
-		if(t[k+2].type == JSMN_ARRAY){
-			superTokSize[lastSuperTokIndex]= t[k].size;
-			countSize[lastSuperTokIndex]= 0;
-			lastSuperTokIndex++;
-			start = k+3;
-			break;
+	int i, count= 0;
+	int nextToKey= 0;
+	int keyTokenSize= 0;
+	for(i=1; i < tokcount ; i++) {
+		if(t[i].type == JSMN_STRING && t[i].parent == 0) {
+			nameTokIndex[count] = i;
+			count++;
+			keyTokenSize = t[i].size;
 		}
-			start = k+1;
-			break;
-		}
-	lastSuperTokIndex++;
 	}
-
-	printf("start: %d lastSuperTokIndex: %d \n", start, lastSuperTokIndex);
-	printf("type: %d, size: %d, parent: %d\n", t[start].type, t[start].size, t[start].parent);
-
-	for(i= start; i < tokcount ; i++) {
-		//printf(">>> %.*s \n",t[i].end-t[i].start,	jsonstr + t[i].start);
-		//printf("type: %d, size: %d, parent: %d\n", t[i].type, t[i].size, t[i].parent);
-		//printf("[%d] lastSuperTokIndex: %d, countSize: %d, superTokSize: %d\n",i, lastSuperTokIndex, countSize[lastSuperTokIndex], superTokSize[lastSuperTokIndex]);
-		for(k= lastSuperTokIndex; countSize[k] == superTokSize[k]; k--){
-				//현재 super 토큰의 사이즈만큼 토큰을 check 했
-			countSize[lastSuperTokIndex]= 0;
-		 	superTokSize[lastSuperTokIndex]= -1;
-			lastSuperTokIndex--;
-		}
-
-		countSize[lastSuperTokIndex]++;
-
-		if(t[i].size>0) {
-			if(t[i].type == JSMN_STRING){
-				if(lastSuperTokIndex==start-1){
-				nameTokIndex[count]=i;
-				count++;
-				}
-				//countSize[lastSuperTokIndex]++;
-			}
-
-			lastSuperTokIndex++;
-			//printf("%d\n",lastSuperTokIndex );
-			superTokSize[lastSuperTokIndex]= t[i].size;
-			countSize[lastSuperTokIndex]= 0;
-
-			}
-
-	}
+//	printf("count : %d\n", count);
 }
 
 void printNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
@@ -119,6 +70,7 @@ int *showFirstValueofLists(char *jsonstr, jsmntok_t *t, int *nameTokIndex, int *
 	count++;
 	for(i= 1; nameTokIndex[i]!=0 ; i++ ) {
 		if(jsoneq(jsonstr, &t[nameTokIndex[0]], &t[nameTokIndex[i]])== 0) {
+			//loop속에서 현재 key가 첫번째 value의 key와 동일한가 jsoneq함수를 이용하여 비교
 			temp = (int *)realloc(temp, sizeof(int) * (count+1));
 			temp[count] = i;
 			count++;
@@ -138,10 +90,7 @@ void printObject(char *jsonstr, jsmntok_t *t, int *nameTokIndex, int *firstIndex
 	scanf("%d", &num);
 	int i;
 	printf("***** Object List *****\n");
-	i= firstIndexList[num-1];
-	printf("	 %.*s : ",t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,	jsonstr + t[nameTokIndex[i]].start);
-	printf(" %.*s\n", t[nameTokIndex[i]+1].end-t[nameTokIndex[i]+1].start,	jsonstr + t[nameTokIndex[i]+1].start);
-	for(i=firstIndexList[num-1]+1 ; i< firstIndexList[num]; i++){
+	for(i=firstIndexList[num-1] ; i< firstIndexList[num]; i++){
 			printf("	[ %.*s ] ",t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,	jsonstr + t[nameTokIndex[i]].start);
 			printf(" %.*s\n", t[nameTokIndex[i]+1].end-t[nameTokIndex[i]+1].start,	jsonstr + t[nameTokIndex[i]+1].start);
 	}
@@ -183,7 +132,7 @@ void selectNameList(char *jsonstr, jsmntok_t *t, int *nameTokIndex){
 	}
 
 int main() {
-	int i, j;
+	int i;
 	int r;
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
@@ -197,10 +146,6 @@ int main() {
 	}
 
 	int nameTokIndex[100]={0};
-	/*for(j = 0; j< r; j++){
-		printf("[%d] type: %d, size: %d, parent: %d\n",j, t[j].type, t[j].size, t[j].parent);
-		printf(" %.*s \n",t[j].end-t[j].start,	JSON_STRING + t[j].start);
-	}*/
 	jsonNameList(JSON_STRING, t, r, nameTokIndex);
 	printNameList(JSON_STRING, t, nameTokIndex);
 	int *firstIndexList = NULL;
@@ -208,5 +153,6 @@ int main() {
 	//selectNameList(JSON_STRING, t, nameTokIndex);
 	printObject(JSON_STRING, t, nameTokIndex, firstIndexList);
 
-	//return EXIT_SUCCESS;
+	return EXIT_SUCCESS;
+
 }
