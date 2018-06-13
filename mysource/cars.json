@@ -1,0 +1,34 @@
+{
+  "cars" : [
+    {
+      "model" : "Sonata",
+      "maker" : "Hyundai",
+      "year" : 2016,
+      "gas" : "gasolin"
+    },
+    {
+      "model" : "Boongboong",
+      "maker" : "Toy",
+      "year" : 2010,
+      "gas" : "None"
+    },
+    {
+      "model" : "NiceCar",
+      "maker" : "CarHouse",
+      "year" : 2013,
+      "gas" : "diesel"
+    },
+    {
+      "model" : "CuteCar",
+      "maker" : "Samsung",
+      "year" : 2017,
+      "gas" : "gasolin"
+    },
+    {
+      "model" : "PrettyCar",
+      "maker" : "Hyundai",
+      "year" : 2012,
+      "gas" : "lpg"
+    }
+  ]
+}
